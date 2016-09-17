@@ -3,7 +3,7 @@
  * BSD license, check license.txt for more information
  */
 // See SSD1306 datasheet for multi-byte commands
-#include "TinyWireM.h"
+#include <TinyWireM.h>
 
 #ifndef _SSD1306_H_
 #define _SSD1306_H_
@@ -47,7 +47,7 @@
 #define SSD1306_PAGEADDR                  0x22       // Setup page start and end address. This command is only for horizontal or vertical addressing mode
 
 //Hardware Configuration (Panel resolution & layout related) Commands
-#define SSD1306_Segment_Remap_Cmd         0xA1       // Column address 127 is mapped to SEG0
+#define SSD1306_SEGREMAPCMD               0xA1       // Column address 127 is mapped to SEG0
 #define SSD1306_SEGREMAP                  0xA0       // Default. column address 0 is mapped to SEG0(RESET)
 #define SSD1306_SETMULTIPLEX              0xA8       // Set MUX ratio to N+1 MUX
 #define SSD1306_COMSCANINC                0xC0       // Normal mode (RESET). Scan from COM0 to COM[N-1]
@@ -81,12 +81,15 @@
 class SSD1306_Display {
 
     public:
+        void init(uint8_t reset_pin);
+
+        void clear();
+        void display_columns(int);
+    private:
         void send_command(unsigned char command);
         void send_data(unsigned char data);
 
-        void init(uint8_t reset_pin);
-
-        void display();
+        void init_screen();
 };
 
 #endif

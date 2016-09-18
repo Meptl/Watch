@@ -108,20 +108,18 @@ void SSD1306_Display::clear() {
     }
 }
 
-// The display is filled in a strange way, see documentation for a more in
-//
-// Perhaps Vertical memory mode would be better for this. I could not get it to
-// work reasonably though.
+// Pages act as rows. Each byte fills a column.
 //
 // Show N columns beginning on the left.
 // This function assumes a WIDTH of 128 pixels.
+#define PAGES 4
 #define MESSAGE_SIZE 16
 void SSD1306_Display::display_columns(int count) {
-    if (count < 0 || count > 128)
-        return;
+    if (count < 0)
+       clear();
     //init_screen();
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < PAGES; i++) {
         for (int j = 0; j < SSD1306_WIDTH / MESSAGE_SIZE; j++) {
             TinyWireM.beginTransmission(SSD1306_ADDR);
             TinyWireM.send(SSD1306_DATAMODE);

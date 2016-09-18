@@ -115,7 +115,7 @@ void SSD1306_Display::clear() {
 #define PAGES 4
 #define MESSAGE_SIZE 16
 void SSD1306_Display::display_columns(int count) {
-    if (count < 0)
+    if (count <= 0)
        clear();
     //init_screen();
 

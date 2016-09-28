@@ -5,8 +5,6 @@
 
 #include "SSD1306_Display.h"
 
-#include <stdlib.h>
-
 // Adafruit trinket only has 512 bytes of RAM and cannot fully store a display buffer.
 // Otherwise we could simply have a display function that pushes the buffer out.
 //static uint8_t buffer[SSD1306_HEIGHT * SSD1306_WIDTH / 8];

@@ -9,11 +9,12 @@
 #define BUTTON_PIN            3
 #define RESET_PIN             4
 
-#define TIME_MS 120000
+#define TIME_MS 6000
 #define ELECTRICITY_TIME 3000
 
 SSD1306_Display display;
 unsigned long prevMillis = 0;
+
 // Width constant from SSD1306_Display.h
 // Move a pixel every interval
 unsigned long interval = TIME_MS / SSD1306_WIDTH - ELECTRICITY_TIME / SSD1306_WIDTH;
@@ -31,8 +32,6 @@ void setup() {
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     pciSetup();
-
-    sleep_device();
 }
 
 void loop() {
@@ -53,7 +52,7 @@ void sleep_device() {
     digitalWrite(OLED_PWR_PIN, LOW);
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
     sleep_enable();
-    sleep_mode();   // Goes to sleep
+    sleep_cpu();   // Goes to sleep
     sleep_disable();
     digitalWrite(OLED_PWR_PIN, HIGH);
     display.init(RESET_PIN);

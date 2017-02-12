@@ -81,18 +81,4 @@ void SSD1306_init_screen(void);
 void SSD1306_clear(void);
 void SSD1306_display_columns(int count);
 
-struct SSD1306_Display {
-    // public
-    void (*init)(uint8_t reset_pin);
-
-    void (*clear)(void);
-    void (*display_columns)(int);
-
-    // private
-    void (*send_command)(unsigned char command);
-    void (*send_data)(unsigned char data);
-
-    void (*init_screen)(void);
-};
-
 #endif

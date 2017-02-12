@@ -3,6 +3,7 @@
  * BSD license, check license.txt for more information
  */
 
+#include <stdint.h>
 #include "SSD1306.h"
 #include "usi_twi.h"
 
@@ -84,7 +85,7 @@ void SSD1306_clear(void) {
     for (uint16_t i = 0; i < SSD1306_WIDTH * SSD1306_HEIGHT / 8; i += 16)
     {
         // Send 16 bytes in one transmission
-        twi_begin_trasmission(SSD1306_ADDR);
+        twi_begin_transmission(SSD1306_ADDR);
         twi_send(SSD1306_DATAMODE);
 
         for (uint8_t j = 0; j < 16; j++)
@@ -115,7 +116,7 @@ void SSD1306_display_columns(int count) {
                 if (j * MESSAGE_SIZE + k < count)
                     twi_send(0xFF);
                 else
-                    (0x00);
+                    twi_send(0x00);
             }
 
             twi_end_transmission();

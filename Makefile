@@ -1,7 +1,8 @@
 MCU_TARGET = attiny85
 PROGRAMMER = -c usbtiny -p t85
+F_CPU      = 1000000
 CC         = avr-gcc
-CFLAGS     = -g -Wall -mmcu=$(MCU_TARGET)
+CFLAGS     = -O2 -Wall -mmcu=$(MCU_TARGET) -DF_CPU=$(F_CPU)UL
 
 OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
 HEADERS = $(wildcard *.h)

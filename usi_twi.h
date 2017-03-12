@@ -51,6 +51,7 @@ void twi_begin_transmission(uint8_t);
 void twi_send(uint8_t);
 
 uint8_t twi_end_transmission(void);
+uint8_t twi_end_transmission_stop(uint8_t);
 uint8_t twi_request_from(uint8_t, uint8_t);
 uint8_t twi_receive(void);
 uint8_t twi_available(void);

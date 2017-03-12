@@ -23,6 +23,35 @@ uint8_t usi_bufidx = 0;                    // current number of bytes in the sen
 uint8_t usi_lastread = 0;                  // number of bytes read so far
 uint8_t usi_bytes_available = 0;           // number of bytes requested but not read
 
+////
+
+#include <avr/interrupt.h>
+#include <avr/io.h>
+#include <util/delay.h>
+#include "SSD1306.h"
+#include "USI_TWI_Master.h"
+#include "usi_twi.h"
+
+// Pin names are defined in io.h
+#define LED      PB0
+#define LED_PORT PORTB
+#define LED_DDR  DDRB
+
+#define SDA      PB0
+#define SCL      PB2
+
+#define SSD1306_RESET PB4
+
+
+#define BV(x)           (1 << x)
+#define setBit(P, B)    P |= BV(B)
+#define clearBit(P, B)  P &= ~BV(B)
+#define toggleBit(P, B) P ^= BV(B)
+
+
+
+
+////
 void twi_init(void)
 {
     USI_TWI_Master_Initialise();
@@ -38,6 +67,7 @@ void twi_begin_transmission(uint8_t slaveAddr)
 // Buffers data to be sent out.
 void twi_send(uint8_t data)
 {
+    // Don't overfill buffer.
     if (usi_bufidx >= USI_BUF_SIZE)
         return;
 
@@ -47,14 +77,34 @@ void twi_send(uint8_t data)
 // Sends out all buffered data
 uint8_t twi_end_transmission(void)
 {
+    return twi_end_transmission_stop(1);
+}
+
+// Sends out all buffered data
+uint8_t twi_end_transmission_stop(uint8_t stop)
+{
     unsigned char xferOK = USI_TWI_Start_Read_Write(usi_buf, usi_bufidx + 1);
     usi_bufidx = 0;
 
-    if (xferOK == TRUE) {
+    if (xferOK) {
+        if (stop) {
+            if (!USI_TWI_Master_Stop()) {
+                return USI_TWI_Get_State_Info();
+            }
+        }
         return 0;
     } else {
-        uint8_t errorCode = USI_TWI_Get_State_Info();
-        return errorCode;
+        /*
+        unsigned char err = USI_TWI_Get_State_Info();
+        clearBit(LED_PORT, LED);
+        while (err-- > 0) {
+            toggleBit(LED_PORT, LED);
+            _delay_ms(500);
+            toggleBit(LED_PORT, LED);
+            _delay_ms(500);
+        }
+        */
+        return USI_TWI_Get_State_Info();
     }
 }
 
@@ -68,7 +118,7 @@ uint8_t twi_request_from(uint8_t slaveAddr, uint8_t numBytes)
     unsigned char xferOK = USI_TWI_Start_Read_Write(usi_buf, numBytes + 1);
 
     // usi_buf now holds the data read
-    if (xferOK == TRUE) {
+    if (xferOK) {
         return 0;
     } else {
         uint8_t errorCode = USI_TWI_Get_State_Info();

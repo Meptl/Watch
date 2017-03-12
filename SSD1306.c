@@ -3,9 +3,27 @@
  * BSD license, check license.txt for more information
  */
 
+#include <avr/io.h>
 #include <stdint.h>
+#include <util/delay.h>
 #include "SSD1306.h"
 #include "usi_twi.h"
+
+// Pin names are defined in io.h
+#define RESET_PORT PORTB
+#define LED      PB0
+#define LED_PORT PORTB
+#define LED_DDR  DDRB
+
+#define SDA      PB0
+#define SCL      PB2
+
+#define SSD1306_RESET PB4
+
+#define BV(x)           (1 << x)
+#define setBit(P, B)    P |= BV(B)
+#define clearBit(P, B)  P &= ~BV(B)
+#define toggleBit(P, B) P ^= BV(B)
 
 void send_command(uint8_t command)
 {
@@ -23,13 +41,26 @@ void send_data(unsigned char data)
     twi_end_transmission();
 }
 
+// Try battery power. Try a different chip.
 void SSD1306_init(uint8_t reset_pin)
 {
     twi_init();
 
+    // Initial reset
+    /*
+    setBit(DDRB, reset_pin);
+    setBit(RESET_PORT, reset_pin);
+    _delay_ms(1);
+    clearBit(RESET_PORT, reset_pin);
+    _delay_ms(10);
+    setBit(RESET_PORT, reset_pin);
+    _delay_ms(1);
+    */
+
     // Send configuration commands
     send_command(SSD1306_DISPLAYOFF);
 
+    /*
     send_command(SSD1306_SETMULTIPLEX);
     send_command(0x1F);
 
@@ -41,10 +72,11 @@ void SSD1306_init(uint8_t reset_pin)
 
     send_command(SSD1306_SETSTARTLINE);
 
-    send_command(SSD1306_SETCONTRAST);
-    send_command(0x8F);
-
+    //send_command(SSD1306_SETCONTRAST);
+    //send_command(0x8F);
+    //
     send_command(SSD1306_SEGREMAPCMD);
+
     send_command(SSD1306_COMSCANDEC);
     send_command(SSD1306_NORMALDISPLAY);
 
@@ -54,7 +86,6 @@ void SSD1306_init(uint8_t reset_pin)
     send_command(SSD1306_SETPRECHARGE);
     //send_command(0x22); // Send for external VCC
     send_command(0xF1); // Send for switch cap VCC
-
     send_command(SSD1306_SETCOMPINS);
     send_command(0x02);
 
@@ -66,6 +97,7 @@ void SSD1306_init(uint8_t reset_pin)
     send_command(SSD1306_CHARGEPUMP_ENABLE); // Send for switch cap VCC
 
     send_command(SSD1306_DISPLAYON);
+    //*/
 }
 
 // Sends a preample for screen output.
